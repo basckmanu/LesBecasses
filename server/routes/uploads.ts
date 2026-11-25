@@ -1,10 +1,10 @@
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
-import type { AppEnv } from '../types';
+import type { AppEnv } from '../env';
 import type { UploadSignResponse } from '../../shared/types';
-import { presignPut } from '../lib/r2-presign';
-import { signUploadSchema } from '../lib/schemas';
+import { presignPut } from '../services/r2-presign';
+import { signUploadSchema } from '../validation/schemas';
 
 const EXPIRES_IN = 900;
 

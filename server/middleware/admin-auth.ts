@@ -1,6 +1,6 @@
 import { createMiddleware } from 'hono/factory';
 import { basicAuth } from 'hono/basic-auth';
-import type { AppEnv } from '../types';
+import type { AppEnv } from '../env';
 import { verifyAccessJwt } from './access-jwt';
 
 /**

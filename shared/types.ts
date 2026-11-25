@@ -1,5 +1,5 @@
-// CONTRAT API partagé entre le front (src/) et le Worker (worker/).
-// Toute modification se discute à plusieurs (voir docs/contrat.md).
+// CONTRAT API partagé entre le front (client/) et le serveur (server/).
+// Toute modification se discute à plusieurs (voir README).
 
 export type EpisodeStatus = 'draft' | 'published';
 

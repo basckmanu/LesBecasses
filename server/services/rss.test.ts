@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildRss, escapeXml, withOp3, type RssConfig, type RssEpisode } from './build-rss';
+import { buildRss, escapeXml, withOp3, type RssConfig, type RssEpisode } from './rss';
 
 const cfg: RssConfig = {
   title: 'Les Bécasses',

@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
-import type { AppEnv } from '../types';
-import { getPublishedBySlug } from '../lib/db';
+import type { AppEnv } from '../env';
+import { getPublishedBySlug } from '../db/episodes';
 
 // SEO d'une SPA : sur /episodes/:slug, on sert index.html avec titre,
 // description et balises OpenGraph déjà remplis (Google + aperçus de partage).

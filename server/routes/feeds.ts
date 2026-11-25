@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
-import type { AppEnv } from '../types';
-import { listAllPublished } from '../lib/db';
-import { buildRss, escapeXml } from '../lib/build-rss';
+import type { AppEnv } from '../env';
+import { listAllPublished } from '../db/episodes';
+import { buildRss, escapeXml } from '../services/rss';
 
 export const feedRoutes = new Hono<AppEnv>();
 

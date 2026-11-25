@@ -1,8 +1,8 @@
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
-import type { AppEnv } from '../types';
-import { getAdminEpisode, setTagsStatements } from '../lib/db';
-import { episodeInputSchema, idParamSchema } from '../lib/schemas';
+import type { AppEnv } from '../env';
+import { getAdminEpisode, setTagsStatements } from '../db/episodes';
+import { episodeInputSchema, idParamSchema } from '../validation/schemas';
 
 // MVP : pas de suppression d'épisode — on repasse en brouillon.
 export const adminRoutes = new Hono<AppEnv>();

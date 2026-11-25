@@ -1,10 +1,10 @@
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
-import type { AppEnv } from '../types';
+import type { AppEnv } from '../env';
 import type { EpisodeListResponse } from '../../shared/types';
-import { getPublishedBySlug, listPublished, listTags, toPublic } from '../lib/db';
-import { listQuerySchema } from '../lib/schemas';
+import { getPublishedBySlug, listPublished, listTags, toPublic } from '../db/episodes';
+import { listQuerySchema } from '../validation/schemas';
 
 const PAGE_SIZE = 12;
 // Cache edge pour ménager les lectures D1 (quotas gratuits)

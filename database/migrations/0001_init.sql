@@ -1,4 +1,4 @@
--- CONTRAT figé en J1 (voir docs/contrat.md).
+-- CONTRAT figé en J1 (voir README).
 -- Ne jamais modifier une migration déjà appliquée : créer 0002_xxx.sql.
 
 CREATE TABLE episodes (
