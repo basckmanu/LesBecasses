@@ -2,81 +2,121 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import type { Episode } from '../../shared/types';
 
 // MAQUETTE : la lecture est SIMULÉE (un compteur avance), car les MP3 n'existent pas encore.
-// Version réelle : un seul <audio> dans le layout, piloté par ce même contexte.
+// Version réelle : un seul <audio> dans le layout, piloté par ce même contexte
+// (playbackRate pour la vitesse, volume/muted pour le son).
+
+export const SPEEDS = [1, 1.25, 1.5, 2, 0.75] as const;
 
 type PlayerState = {
   episode: Episode | null;
   playing: boolean;
   position: number; // secondes
+  speed: number;
+  volume: number; // 0 → 1
+  muted: boolean;
+  hasPrev: boolean;
+  hasNext: boolean;
   play: (episode: Episode) => void;
   toggle: () => void;
   seek: (seconds: number) => void;
   skip: (delta: number) => void;
-  close: () => void;
+  next: () => void;
+  prev: () => void;
+  cycleSpeed: () => void;
+  setVolume: (v: number) => void;
+  toggleMute: () => void;
+  isLiked: (slug: string) => boolean;
+  toggleLike: (slug: string) => void;
 };
 
 const PlayerContext = createContext<PlayerState | null>(null);
 const positionKey = (slug: string) => `player:position:${slug}`;
+const readNumber = (key: string, fallback: number) => {
+  const v = Number(localStorage.getItem(key));
+  return Number.isFinite(v) && localStorage.getItem(key) !== null ? v : fallback;
+};
 
-export function PlayerProvider({ children }: { children: ReactNode }) {
+/**
+ * `playlist` : ordre de lecture pour précédent / suivant (ex. tous les épisodes).
+ * Version réelle : la liste renvoyée par GET /api/episodes.
+ */
+export function PlayerProvider({ children, playlist = [] }: { children: ReactNode; playlist?: Episode[] }) {
   const [episode, setEpisode] = useState<Episode | null>(null);
   const [playing, setPlaying] = useState(false);
   const [position, setPosition] = useState(0);
+  const [speed, setSpeed] = useState(() => readNumber('player:speed', 1));
+  const [volume, setVolumeState] = useState(() => readNumber('player:volume', 0.8));
+  const [muted, setMuted] = useState(false);
+  const [liked, setLiked] = useState<string[]>(() => JSON.parse(localStorage.getItem('player:liked') ?? '[]'));
   const duration = episode?.duration_sec ?? 0;
 
-  // Simulation de lecture : +1 s par seconde
+  // Une seule entrée par épisode (au cas où la liste contient des doublons)
+  const queue = useMemo(() => [...new Map(playlist.map((e) => [e.slug, e])).values()], [playlist]);
+  const index = episode ? queue.findIndex((e) => e.slug === episode.slug) : -1;
+
+  const load = useCallback((ep: Episode, autoplay = true) => {
+    setEpisode(ep);
+    setPosition(readNumber(positionKey(ep.slug), 0));
+    setPlaying(autoplay);
+  }, []);
+
+  const next = useCallback(() => {
+    const n = queue[index + 1];
+    if (n) load(n);
+  }, [queue, index, load]);
+
+  // Simulation de lecture : avance de `speed` secondes par seconde, enchaîne sur le suivant à la fin
   useEffect(() => {
     if (!playing) return;
-    const id = setInterval(() => {
-      setPosition((p) => {
-        if (p + 1 >= duration) {
-          setPlaying(false);
-          return duration;
-        }
-        return p + 1;
-      });
-    }, 1000);
+    const id = setInterval(() => setPosition((p) => Math.min(p + speed, duration)), 1000);
     return () => clearInterval(id);
-  }, [playing, duration]);
+  }, [playing, speed, duration]);
 
-  // Reprise de position : sauvegarde dans localStorage
   useEffect(() => {
-    if (episode) localStorage.setItem(positionKey(episode.slug), String(position));
-  }, [episode, position]);
+    if (!episode || !playing || position < duration) return;
+    localStorage.removeItem(positionKey(episode.slug));
+    if (queue[index + 1]) next();
+    else setPlaying(false);
+  }, [position, duration, episode, playing, queue, index, next]);
 
-  // Laisse de la place en bas de page quand la barre est visible
+  // Persistance : position par épisode, réglages, favoris
   useEffect(() => {
-    document.body.classList.toggle('has-player', !!episode);
-  }, [episode]);
-
-  const play = useCallback(
-    (next: Episode) => {
-      if (episode?.slug === next.slug) {
-        setPlaying(true);
-        return;
-      }
-      setEpisode(next);
-      setPosition(Number(localStorage.getItem(positionKey(next.slug)) ?? 0));
-      setPlaying(true);
-    },
-    [episode],
-  );
+    if (episode && position < duration) localStorage.setItem(positionKey(episode.slug), String(Math.floor(position)));
+  }, [episode, position, duration]);
+  useEffect(() => localStorage.setItem('player:speed', String(speed)), [speed]);
+  useEffect(() => localStorage.setItem('player:volume', String(volume)), [volume]);
+  useEffect(() => localStorage.setItem('player:liked', JSON.stringify(liked)), [liked]);
 
   const value = useMemo<PlayerState>(
     () => ({
       episode,
       playing,
       position,
-      play,
-      toggle: () => setPlaying((p) => !p),
+      speed,
+      volume,
+      muted,
+      hasPrev: index > 0,
+      hasNext: index >= 0 && index < queue.length - 1,
+      play: (ep) => (episode?.slug === ep.slug ? setPlaying(true) : load(ep)),
+      toggle: () => episode && setPlaying((p) => !p),
       seek: (s) => setPosition(Math.min(Math.max(0, s), duration)),
       skip: (d) => setPosition((p) => Math.min(Math.max(0, p + d), duration)),
-      close: () => {
-        setPlaying(false);
-        setEpisode(null);
+      next,
+      // Comme sur les lecteurs habituels : revient au début si on a déjà écouté quelques secondes
+      prev: () => {
+        if (position > 5 || index <= 0) setPosition(0);
+        else load(queue[index - 1]!);
       },
+      cycleSpeed: () => setSpeed((s) => SPEEDS[(SPEEDS.indexOf(s as (typeof SPEEDS)[number]) + 1) % SPEEDS.length]!),
+      setVolume: (v) => {
+        setVolumeState(Math.min(Math.max(0, v), 1));
+        setMuted(false);
+      },
+      toggleMute: () => setMuted((m) => !m),
+      isLiked: (slug) => liked.includes(slug),
+      toggleLike: (slug) => setLiked((l) => (l.includes(slug) ? l.filter((s) => s !== slug) : [...l, slug])),
     }),
-    [episode, playing, position, play, duration],
+    [episode, playing, position, speed, volume, muted, index, queue, duration, load, next, liked],
   );
 
   return <PlayerContext.Provider value={value}>{children}</PlayerContext.Provider>;

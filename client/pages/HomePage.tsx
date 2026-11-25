@@ -41,14 +41,14 @@ export function HomePage() {
       {/* Classement */}
       <Carousel title="Les épisodes les plus écoutés" kind="ranked">
         {top.map((ep, i) => (
-          <RankedEpisode key={ep.slug} episode={ep} rank={i + 1} />
+          <RankedEpisode key={`${ep.slug}-${i}`} episode={ep} rank={i + 1} />
         ))}
       </Carousel>
 
       {/* Derniers épisodes */}
       <Carousel title="À rattraper sous la couette" kind="posters">
-        {MOCK_EPISODES.map((ep) => (
-          <EpisodePoster key={ep.slug} episode={ep} />
+        {MOCK_EPISODES.map((ep, i) => (
+          <EpisodePoster key={`${ep.slug}-${i}`} episode={ep} />
         ))}
       </Carousel>
 

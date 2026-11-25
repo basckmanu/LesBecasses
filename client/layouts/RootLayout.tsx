@@ -17,6 +17,9 @@ export function RootLayout() {
             <NavLink to="/a-propos">À propos</NavLink>
             <NavLink to="/admin">Admin</NavLink>
           </nav>
+          <div className="header-actions">
+            <a className="btn light small" href="/rss.xml">S'abonner</a>
+          </div>
         </div>
       </header>
 

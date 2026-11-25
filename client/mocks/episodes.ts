@@ -8,6 +8,8 @@ export const MOCK_TAGS: Tag[] = [
   { slug: 'invite', label: 'Invité' },
   { slug: 'humour', label: 'Humour' },
   { slug: 'actu', label: 'Actu' },
+  { slug: 'jeux-vidéo', label: 'Jeux vidéo' },
+  { slug: 'sport', label: 'sport' },
 ];
 
 const tag = (...slugs: string[]) => MOCK_TAGS.filter((t) => slugs.includes(t.slug));

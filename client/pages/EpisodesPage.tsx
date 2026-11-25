@@ -30,8 +30,8 @@ export function EpisodesPage() {
 
       {episodes.length ? (
         <div className="grid">
-          {episodes.map((ep) => (
-            <EpisodeCard key={ep.slug} episode={ep} />
+          {episodes.map((ep, i) => (
+            <EpisodeCard key={`${ep.slug}-${i}`} episode={ep} />
           ))}
         </div>
       ) : (
