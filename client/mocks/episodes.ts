@@ -111,8 +111,50 @@ export const MOCK_EPISODES: Episode[] = [
     season: 1,
     episode_number: 1,
     tags: tag('societe'),
+  },{
+    slug: 'ep-001-le-pilote',
+    title: 'Le pilote : pourquoi Les Bécasses ?',
+    summary: "On se présente, on explique le nom (oui, c'est un oiseau) et ce que vous allez entendre ici.",
+    published_at: '2026-08-14T08:00:00Z',
+    youtube_id: 'mock-video-1',
+    audio_url: 'mock://ep-001.mp3',
+    duration_sec: 1860,
+    season: 1,
+    episode_number: 1,
+    tags: tag('societe'),
+  },
+  {
+    slug: 'ep-001-le-pilote',
+    title: 'Le pilote : pourquoi Les Bécasses ?',
+    summary: "On se présente, on explique le nom (oui, c'est un oiseau) et ce que vous allez entendre ici.",
+    published_at: '2026-08-14T08:00:00Z',
+    youtube_id: 'mock-video-1',
+    audio_url: 'mock://ep-001.mp3',
+    duration_sec: 1860,
+    season: 1,
+    episode_number: 1,
+    tags: tag('societe'),
   },
 ];
+
+/** Classement factice « les plus écoutés » (plus tard : stats OP3). */
+export const MOCK_TOP_SLUGS = [
+  'ep-006-rencontre-avec-une-illustratrice',
+  'ep-008-faut-il-tout-dire',
+  'ep-003-nos-films-doudous',
+  'ep-001-le-pilote',
+  'ep-005-on-a-teste-la-deconnexion',
+  'ep-007-la-bibliotheque-ideale',
+];
+
+/** Couleur et accroche de chaque thème (tuiles de l'accueil). */
+export const THEME_STYLES: Record<string, { from: string; to: string; pitch: string }> = {
+  societe: { from: '#7b1e2c', to: '#b0394c', pitch: 'On refait le monde' },
+  culture: { from: '#9c5f2c', to: '#d39a5c', pitch: 'Livres, films, coups de cœur' },
+  invite: { from: '#8c3a52', to: '#c9798c', pitch: 'Ils et elles passent au salon' },
+  humour: { from: '#4a2a24', to: '#8a5340', pitch: 'Pour rire sous le plaid' },
+  actu: { from: '#5a1420', to: '#93283c', pitch: "L'actu, version canapé" },
+};
 
 /** Notes d'épisode factices (le contrat MVP n'a que `summary`). */
 export const MOCK_NOTES = [
