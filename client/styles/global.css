@@ -98,7 +98,7 @@ main.container { padding-top: 1.75rem; padding-bottom: 4rem; min-height: 70vh; }
   display: inline-flex; align-items: center; gap: .5rem;
   border: 0; border-radius: 999px; padding: .7rem 1.35rem;
   background: var(--wine); color: var(--ink); font: 800 .95rem var(--font-body);
-  cursor: pointer; text-decoration: none; transition: transform .15s, background .2s;
+  cursor: pointer; text-decoration: none; white-space: nowrap; transition: transform .15s, background .2s;
 }
 .btn:hover { background: #b92c44; }
 .btn:active { transform: scale(.97); }
@@ -539,6 +539,7 @@ td.title a:hover { text-decoration: underline; }
 .episode-form { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 1.75rem; align-items: start; }
 .form-main { display: grid; gap: 1.25rem; }
 .form-section { margin: 0; padding: 1.25rem 1.25rem .5rem; border-radius: 22px; min-width: 0; }
+.form-section > :not(legend) { clear: both; } /* le contenu passe sous le titre flottant */
 .form-section legend {
   float: left; width: 100%; margin-bottom: 1rem; padding: 0;
   font: 800 .78rem var(--font-body); text-transform: uppercase; letter-spacing: .1em; color: var(--caramel-text);

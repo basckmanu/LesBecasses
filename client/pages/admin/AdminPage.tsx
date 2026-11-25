@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { api, useApi, type ApiError } from '../../lib/api';
-import { formatBytes, formatDate } from '../../lib/format';
+import { formatDate } from '../../lib/format';
 import { Empty, ErrorState, Loading } from '../../components/States';
 import { ConfirmDialog } from '../../components/ConfirmDialog';
 
@@ -19,7 +19,7 @@ export type AdminRow = {
 
 type Filter = 'all' | 'published' | 'draft';
 
-/** Liste de tous les épisodes (brouillons compris) avec les actions du CRUD. */
+/** Liste de tous les épisodes (brouillons compris) : ajouter, modifier, supprimer. */
 export function AdminPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -48,11 +48,6 @@ export function AdminPage() {
     }
   };
 
-  const togglePublish = (row: AdminRow) =>
-    row.status === 'published'
-      ? run(row, () => api(`/api/admin/episodes/${row.id}/unpublish`, { method: 'POST' }), `« ${row.title} » est repassé en brouillon.`)
-      : run(row, () => api(`/api/admin/episodes/${row.id}/publish`, { method: 'POST' }), `« ${row.title} » est publié.`);
-
   const confirmDelete = async () => {
     if (!toDelete) return;
     const row = toDelete;
@@ -66,7 +61,6 @@ export function AdminPage() {
 
   const published = rows.filter((r) => r.status === 'published').length;
   const drafts = rows.length - published;
-  const withoutAudio = rows.filter((r) => !r.audio_key).length;
 
   const q = search.trim().toLowerCase();
   const visible = rows.filter(
@@ -83,7 +77,6 @@ export function AdminPage() {
       <div className="stats">
         <div className="stat"><strong>{published}</strong><span>publié{published > 1 ? 's' : ''}</span></div>
         <div className="stat"><strong>{drafts}</strong><span>brouillon{drafts > 1 ? 's' : ''}</span></div>
-        <div className="stat"><strong>{withoutAudio}</strong><span>sans fichier audio</span></div>
       </div>
 
       {flash && (
@@ -126,7 +119,6 @@ export function AdminPage() {
                 <th>Titre</th>
                 <th>Statut</th>
                 <th>Publié le</th>
-                <th>Fichier audio</th>
                 <th><span className="sr-only">Actions</span></th>
               </tr>
             </thead>
@@ -141,13 +133,9 @@ export function AdminPage() {
                     <span className={`badge ${row.status}`}>{row.status === 'published' ? 'Publié' : 'Brouillon'}</span>
                   </td>
                   <td>{formatDate(row.published_at)}</td>
-                  <td className="meta">{row.audio_key ? `${row.audio_key} · ${formatBytes(row.audio_bytes)}` : 'Aucun fichier'}</td>
                   <td>
                     <div className="row-actions">
                       <Link className="btn ghost small" to={`/admin/episodes/${row.id}`}>Modifier</Link>
-                      <button className="btn secondary small" disabled={busyId === row.id} onClick={() => togglePublish(row)}>
-                        {row.status === 'published' ? 'Dépublier' : 'Publier'}
-                      </button>
                       <button className="btn danger small" disabled={busyId === row.id} onClick={() => setToDelete(row)}>
                         Supprimer
                       </button>
@@ -183,7 +171,6 @@ export function DeleteDialog(props: { row: Pick<AdminRow, 'title' | 'status'>; p
         Cette action est <strong>irréversible</strong>.
       </p>
       {props.row.status === 'published' && <p className="meta">Pour simplement le masquer, utilise plutôt « Dépublier ».</p>}
-      <p className="meta">Le fichier MP3 reste conservé dans le stockage.</p>
     </ConfirmDialog>
   );
 }

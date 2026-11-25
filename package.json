@@ -12,9 +12,12 @@
     "lint": "eslint .",
     "test": "vitest run",
     "deploy": "vite build && wrangler deploy",
+    "deploy:test": "vite build && wrangler deploy --env test",
     "db:migrate:local": "wrangler d1 migrations apply podcast-db --local",
     "db:seed:local": "wrangler d1 execute podcast-db --local --file=database/seed.sql",
     "db:migrate:remote": "wrangler d1 migrations apply podcast-db --remote",
+    "db:migrate:test": "wrangler d1 migrations apply database_lesbecasses --remote --env test",
+    "db:seed:test": "wrangler d1 execute database_lesbecasses --remote --env test --file=database/seed.sql",
     "cf-typegen": "wrangler types"
   },
   "dependencies": {

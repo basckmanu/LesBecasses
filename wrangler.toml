@@ -1,12 +1,21 @@
 # Un seul Worker : front React (assets statiques) + API Hono.
+#
+# Deux environnements :
+#   - PRODUCTION (par défaut)  : npm run deploy        → Worker « podcast »,      base podcast-db
+#   - TEST       (--env test)  : npm run deploy:test   → Worker « podcast-test », base database_lesbecasses
+#
+# ⚠ Dans un [env.*], wrangler n'hérite PAS des bases, buckets et variables :
+#   ils sont recopiés plus bas. Toute nouvelle variable doit être ajoutée aux deux endroits.
+
 name = "podcast"
 main = "server/index.ts"
 compatibility_date = "2026-11-01"
 compatibility_flags = ["nodejs_compat"]
 
-# Sécurité : pas d'URL *.workers.dev ni de preview publique,
+# Sécurité : pas d'URL *.workers.dev ni de preview publique en production,
 # sinon /admin serait joignable en contournant Cloudflare Access.
-workers_dev = true
+# (Pour tester en ligne sans domaine : utiliser l'environnement de test ci-dessous.)
+workers_dev = false
 preview_urls = false
 
 [observability]
@@ -18,16 +27,12 @@ binding = "ASSETS"
 not_found_handling = "single-page-application"
 run_worker_first = ["/api/*", "/rss.xml", "/sitemap.xml", "/episodes/*"]
 
+# ---------- PRODUCTION ----------
+
 [[d1_databases]]
 binding = "DB"
 database_name = "podcast-db"
 database_id = "9dcd794f-6bce-4fe9-bbdd-dda9dcd24933"
-migrations_dir = "database/migrations"
-
-[[d2_databases]]
-binding = "DB"
-database_name = "database_lesbecasses"
-database_id = "2f3d18b4-7d06-4b60-8cc6-d750e0752f72"
 migrations_dir = "database/migrations"
 
 [[r2_buckets]]
@@ -39,7 +44,7 @@ SITE_URL = "https://exemple.fr"
 MEDIA_BASE_URL = "https://media.exemple.fr"
 OP3_PREFIX = "https://op3.dev/e/"
 R2_BUCKET_NAME = "podcast-media"
-# "access" (Cloudflare Access) ou "basic" (plan B : basic-auth)
+# "access" (Cloudflare Access) ou "basic" (plan B : identifiant + mot de passe)
 AUTH_MODE = "access"
 ACCESS_TEAM_DOMAIN = "<equipe>.cloudflareaccess.com"
 PODCAST_TITLE = "Les Bécasses"
@@ -53,3 +58,39 @@ PODCAST_LANGUAGE = "fr"
 # Secrets (wrangler secret put …, jamais ici) — voir .dev.vars.example :
 #   ACCESS_AUD, R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY,
 #   BASIC_AUTH_USER, BASIC_AUTH_PASSWORD (plan B uniquement)
+
+# ---------- TEST ----------
+# Site de test en ligne, sur une URL *.workers.dev, avec sa propre base.
+# Connexion admin par identifiant + mot de passe (secrets à définir une fois) :
+#   npx wrangler secret put BASIC_AUTH_USER --env test
+#   npx wrangler secret put BASIC_AUTH_PASSWORD --env test
+
+[env.test]
+name = "podcast-test"
+workers_dev = true
+
+[[env.test.d1_databases]]
+binding = "DB"
+database_name = "database_lesbecasses"
+database_id = "2f3d18b4-7d06-4b60-8cc6-d750e0752f72"
+migrations_dir = "database/migrations"
+
+# TODO Infra 1 : un bucket dédié au test (ex. podcast-media-test) quand l'envoi de MP3 sera branché
+[[env.test.r2_buckets]]
+binding = "MEDIA"
+bucket_name = "podcast-media"
+
+[env.test.vars]
+SITE_URL = "https://podcast-test.lesbecasses.workers.dev"
+MEDIA_BASE_URL = "https://media.exemple.fr"
+OP3_PREFIX = "https://op3.dev/e/"
+R2_BUCKET_NAME = "podcast-media"
+AUTH_MODE = "basic"
+ACCESS_TEAM_DOMAIN = ""
+PODCAST_TITLE = "Les Bécasses (TEST)"
+PODCAST_DESCRIPTION = "Site de test — ne pas diffuser"
+PODCAST_AUTHOR = "TODO auteur (Com)"
+PODCAST_OWNER_EMAIL = "contact@exemple.fr"
+PODCAST_IMAGE_URL = "https://media.exemple.fr/cover-3000.jpg"
+PODCAST_CATEGORY = "Society & Culture"
+PODCAST_LANGUAGE = "fr"
