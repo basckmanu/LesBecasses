@@ -6,7 +6,7 @@ compatibility_flags = ["nodejs_compat"]
 
 # Sécurité : pas d'URL *.workers.dev ni de preview publique,
 # sinon /admin serait joignable en contournant Cloudflare Access.
-workers_dev = false
+workers_dev = true
 preview_urls = false
 
 [observability]
