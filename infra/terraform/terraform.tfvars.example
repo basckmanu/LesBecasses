@@ -1,0 +1,5 @@
+# Copier en terraform.tfvars (ignoré par Git). Ne jamais committer de vrai token.
+cloudflare_api_token = ""
+account_id           = ""
+zone_id              = ""
+domain               = "exemple.fr"

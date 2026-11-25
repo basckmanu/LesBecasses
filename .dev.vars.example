@@ -1,0 +1,13 @@
+# Copier en .dev.vars (ignoré par Git) pour `wrangler dev`.
+# En local, on passe en basic-auth (Cloudflare Access n'existe pas en local).
+AUTH_MODE=basic
+BASIC_AUTH_USER=admin
+BASIC_AUTH_PASSWORD=change-moi
+
+# Audience de l'application Access (onglet Overview de l'app Zero Trust)
+ACCESS_AUD=
+
+# Token API R2 « S3 » limité au bucket podcast-media (Object Read & Write) — fourni par Infra 1
+R2_ACCOUNT_ID=
+R2_ACCESS_KEY_ID=
+R2_SECRET_ACCESS_KEY=

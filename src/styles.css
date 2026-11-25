@@ -1,0 +1,9 @@
+/* TODO : design tokens de la charte (Com) */
+:root {
+  font-family: system-ui, sans-serif;
+}
+main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
