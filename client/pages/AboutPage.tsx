@@ -4,8 +4,9 @@ export function AboutPage() {
     <article className="prose">
       <h1>À propos</h1>
       <p>
-        Les Bécasses, c'est une bande d'amies qui a décidé de transformer ses discussions de comptoir en podcast. On
-        parle de tout, on n'est d'accord sur rien, et c'est précisément ce qui nous plaît.
+        Les Bécasses, c'est une bande d'amies qui a décidé de transformer ses discussions de canapé en podcast. Plaid
+        sur les genoux, tasse à la main : on parle de tout, on n'est d'accord sur rien, et c'est précisément ce qui
+        nous plaît.
       </p>
       <p>
         Pourquoi « Les Bécasses » ? Parce que c'est un joli oiseau des sous-bois, discret et un peu têtu… et parce

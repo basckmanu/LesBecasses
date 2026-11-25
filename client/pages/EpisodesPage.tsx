@@ -35,7 +35,7 @@ export function EpisodesPage() {
           ))}
         </div>
       ) : (
-        <div className="empty">Aucun épisode pour ce thème… pour l'instant.</div>
+        <div className="empty">Rien par ici pour l'instant… on avait un peu la flemme. Ça arrive !</div>
       )}
     </>
   );

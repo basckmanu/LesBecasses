@@ -4,8 +4,8 @@ export function NotFoundPage() {
   return (
     <div className="empty">
       <h1>Page introuvable</h1>
-      <p>Cette page s'est envolée. Les bécasses sont parfois difficiles à attraper.</p>
-      <Link className="btn" to="/episodes">Voir les épisodes</Link>
+      <p>Cette page fait la sieste. On n'ose pas la réveiller.</p>
+      <Link className="btn" to="/episodes">Retourner au canapé</Link>
     </div>
   );
 }

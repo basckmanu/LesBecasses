@@ -13,15 +13,17 @@ export function HomePage() {
     <>
       <section className="hero">
         <div>
-          <span className="hero-kicker">Podcast & vidéocast</span>
-          <h1>Des discussions franches, sans se prendre au sérieux.</h1>
+          <span className="hero-kicker">Podcast & vidéocast · à écouter sous un plaid</span>
+          <h1>
+            Le podcast qui a <em>la flemme</em>, mais qui a des choses à dire.
+          </h1>
           <p className="lead">
-            Tous les quinze jours, Les Bécasses débattent de société, de culture et de tout ce qui nous passe par la
-            tête. À écouter ici, sur Spotify, Apple Podcasts ou YouTube.
+            Tous les quinze jours, Les Bécasses refont le monde depuis le canapé : société, culture et tout ce qui nous
+            passe par la tête. Thé chaud conseillé. À écouter ici, sur Spotify, Apple Podcasts ou YouTube.
           </p>
           <div className="hero-actions">
-            <Link className="btn" to="/episodes">Voir les épisodes</Link>
-            <Link className="btn secondary" to="/a-propos">Qui sommes-nous ?</Link>
+            <Link className="btn" to="/episodes">Se poser et écouter</Link>
+            <Link className="btn secondary" to="/a-propos">Qui sont ces bécasses ?</Link>
           </div>
           <div className="platforms">
             Aussi sur
@@ -53,7 +55,7 @@ export function HomePage() {
 
       <section>
         <div className="section-head">
-          <h2>Épisodes récents</h2>
+          <h2>À rattraper sous la couette</h2>
           <Link to="/episodes">Tout voir →</Link>
         </div>
         <div className="grid">
