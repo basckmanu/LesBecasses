@@ -3,6 +3,7 @@ import { HTTPException } from 'hono/http-exception';
 import type { AppEnv } from './env';
 import { publicRoutes } from './routes/public';
 import { adminRoutes } from './routes/admin';
+import { adminTagRoutes } from './routes/admin-tags';
 import { uploadRoutes } from './routes/uploads';
 import { feedRoutes } from './routes/feeds';
 import { seoRoutes } from './routes/seo';
@@ -19,7 +20,9 @@ app.route('/api', publicRoutes);
 
 // API admin : Cloudflare Access en façade + validation du JWT ici (défense en profondeur)
 app.use('/api/admin/*', adminAuth);
+app.get('/api/admin/me', (c) => c.json({ user: c.get('adminEmail') })); // « suis-je connecté ? »
 app.route('/api/admin/episodes', adminRoutes);
+app.route('/api/admin/tags', adminTagRoutes);
 app.route('/api/admin/uploads', uploadRoutes);
 
 // Flux et SEO

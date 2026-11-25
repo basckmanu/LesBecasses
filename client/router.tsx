@@ -6,7 +6,9 @@ import { EpisodePage } from './pages/EpisodePage';
 import { AboutPage } from './pages/AboutPage';
 import { LegalPage } from './pages/LegalPage';
 import { NotFoundPage } from './pages/NotFoundPage';
+import { AdminLayout } from './layouts/AdminLayout';
 import { AdminPage } from './pages/admin/AdminPage';
+import { EpisodeFormPage } from './pages/admin/EpisodeFormPage';
 
 export const router = createBrowserRouter([
   {
@@ -18,8 +20,16 @@ export const router = createBrowserRouter([
       { path: '/a-propos', element: <AboutPage /> },
       { path: '/mentions-legales', element: <LegalPage /> },
 
-      // Protégé par Cloudflare Access (/admin*)
-      { path: '/admin', element: <AdminPage /> },
+      // Back-office : AdminLayout vérifie l'accès (modale en local, Cloudflare Access en production)
+      {
+        path: '/admin',
+        element: <AdminLayout />,
+        children: [
+          { index: true, element: <AdminPage /> },
+          { path: 'episodes/new', element: <EpisodeFormPage /> },
+          { path: 'episodes/:id', element: <EpisodeFormPage /> },
+        ],
+      },
 
       { path: '*', element: <NotFoundPage /> },
     ],

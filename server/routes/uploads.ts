@@ -38,7 +38,8 @@ uploadRoutes.put(
     const { key } = c.req.valid('param');
     if (c.req.header('content-type') !== 'audio/mpeg') return c.json({ error: 'MP3 uniquement' }, 415);
     if (!c.req.raw.body) return c.json({ error: 'Fichier manquant' }, 400);
-    if (await c.env.MEDIA.head(key)) return c.json({ error: 'Un fichier porte déjà ce nom' }, 409);
+    // Pas de refus si le fichier existe : son nom vient du slug (unique), donc c'est celui
+    // du même épisode → « Remplacer » l'écrase.
 
     const obj = await c.env.MEDIA.put(key, c.req.raw.body, { httpMetadata: { contentType: 'audio/mpeg' } });
     return c.json({ key: obj.key, size: obj.size }, 201);
