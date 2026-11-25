@@ -18,6 +18,8 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/main.tsx"></script>
-    <!-- TODO Infra 3 : snippet Cloudflare Web Analytics -->
+    <!-- Cloudflare Web Analytics (sans cookies) — token du site de test (podcast-test.lesbecasses.workers.dev).
+         TODO : créer un site Web Analytics pour le vrai domaine et utiliser son token en production. -->
+    <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "a75eebe57a5f470ab8bd85125e2b9b69"}'></script>
   </body>
 </html>
