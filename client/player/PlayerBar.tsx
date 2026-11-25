@@ -14,7 +14,7 @@ import {
 } from '../components/icons';
 
 /** Curseur stylé : la partie écoutée est colorée grâce à la variable CSS --p (0 → 100 %). */
-function Slider(props: { value: number; max: number; onChange: (v: number) => void; label: string; step?: number; className?: string }) {
+function Slider(props: { value: number; max: number; onChange: (v: number) => void; label: string; className?: string }) {
   const pct = props.max ? (props.value / props.max) * 100 : 0;
   return (
     <input
@@ -22,7 +22,6 @@ function Slider(props: { value: number; max: number; onChange: (v: number) => vo
       className={`slider ${props.className ?? ''}`}
       min={0}
       max={props.max}
-      step={props.step ?? 1}
       value={props.value}
       onChange={(e) => props.onChange(Number(e.target.value))}
       aria-label={props.label}
@@ -32,8 +31,8 @@ function Slider(props: { value: number; max: number; onChange: (v: number) => vo
 }
 
 /**
- * Barre de lecture fixe en bas de l'écran, toujours visible, en 3 colonnes :
- * épisode en cours | commandes + progression | vitesse + volume.
+ * Barre d'écoute flottante en verre dépoli, toujours visible :
+ * commandes | pastille « en cours d'écoute » (pochette, titre, progression) | réglages.
  * Elle est hors de l'<Outlet/> : la lecture continue pendant la navigation.
  */
 export function PlayerBar() {
@@ -41,65 +40,57 @@ export function PlayerBar() {
   const ep = p.episode;
   const duration = ep?.duration_sec ?? 0;
   const vol = p.muted ? 0 : p.volume;
+  const liked = ep ? p.isLiked(ep.slug) : false;
 
   return (
-    <div className={`playerbar ${ep ? '' : 'is-empty'}`} role="region" aria-label="Lecteur audio">
-      {/* Progression fine en haut, visible seulement sur mobile */}
-      <div className="playerbar-mobile-progress" style={{ width: `${duration ? (p.position / duration) * 100 : 0}%` }} />
-
-      {/* Gauche : épisode en cours */}
-      <div className="pb-track">
-        {ep ? (
-          <>
-            <Cover episode={ep} variant="mini" />
-            <div className="pb-track-text">
-              <Link to={`/episodes/${ep.slug}`} className="pb-title">{ep.title}</Link>
-              <span className="pb-sub">Les Bécasses · Épisode {ep.episode_number}</span>
-            </div>
-            <button
-              className={`icon-btn pb-like ${p.isLiked(ep.slug) ? 'is-on' : ''}`}
-              onClick={() => p.toggleLike(ep.slug)}
-              aria-label={p.isLiked(ep.slug) ? 'Retirer des favoris' : 'Ajouter aux favoris'}
-              aria-pressed={p.isLiked(ep.slug)}
-            >
-              <HeartIcon filled={p.isLiked(ep.slug)} />
-            </button>
-          </>
-        ) : (
-          <>
-            <div className="pb-placeholder" aria-hidden />
-            <div className="pb-track-text">
-              <span className="pb-title">Rien en écoute</span>
-              <span className="pb-sub">Choisis un épisode et installe-toi</span>
-            </div>
-          </>
-        )}
+    <div className={`playerbar glass ${ep ? '' : 'is-empty'}`} role="region" aria-label="Lecteur audio">
+      {/* Gauche : commandes */}
+      <div className="pb-controls">
+        <button className="icon-btn" onClick={p.prev} disabled={!ep} aria-label="Épisode précédent ou retour au début">
+          <PrevIcon />
+        </button>
+        <button className="icon-btn hide-sm" onClick={() => p.skip(-15)} disabled={!ep} aria-label="Reculer de 15 secondes">
+          <Back15Icon />
+        </button>
+        <button className="pb-play" onClick={p.toggle} disabled={!ep} aria-label={p.playing ? 'Pause' : 'Lecture'}>
+          {p.playing ? <PauseIcon size={20} /> : <PlayIcon size={20} />}
+        </button>
+        <button className="icon-btn hide-sm" onClick={() => p.skip(30)} disabled={!ep} aria-label="Avancer de 30 secondes">
+          <Forward30Icon />
+        </button>
+        <button className="icon-btn" onClick={p.next} disabled={!p.hasNext} aria-label="Épisode suivant">
+          <NextIcon />
+        </button>
       </div>
 
-      {/* Centre : commandes + progression */}
-      <div className="pb-center">
-        <div className="pb-controls">
-          <button className="icon-btn" onClick={p.prev} disabled={!ep} aria-label="Épisode précédent ou retour au début">
-            <PrevIcon />
-          </button>
-          <button className="icon-btn" onClick={() => p.skip(-15)} disabled={!ep} aria-label="Reculer de 15 secondes">
-            <Back15Icon />
-          </button>
-          <button className="pb-play" onClick={p.toggle} disabled={!ep} aria-label={p.playing ? 'Pause' : 'Lecture'}>
-            {p.playing ? <PauseIcon size={18} /> : <PlayIcon size={18} />}
-          </button>
-          <button className="icon-btn" onClick={() => p.skip(30)} disabled={!ep} aria-label="Avancer de 30 secondes">
-            <Forward30Icon />
-          </button>
-          <button className="icon-btn" onClick={p.next} disabled={!p.hasNext} aria-label="Épisode suivant">
-            <NextIcon />
-          </button>
+      {/* Centre : pastille « en cours d'écoute » */}
+      <div className="pb-now">
+        {ep ? <Cover episode={ep} variant="mini" /> : <div className="pb-placeholder" aria-hidden />}
+        <div className="pb-now-main">
+          <div className="pb-now-text">
+            {ep ? (
+              <Link to={`/episodes/${ep.slug}`} className="pb-title">{ep.title}</Link>
+            ) : (
+              <span className="pb-title">Rien en écoute</span>
+            )}
+            <span className="pb-sub">{ep ? `Les Bécasses · Épisode ${ep.episode_number}` : 'Choisis un épisode et installe-toi'}</span>
+          </div>
+          <div className="pb-progress">
+            <span className="pb-time">{formatClock(p.position)}</span>
+            <Slider value={Math.floor(p.position)} max={duration} onChange={p.seek} label="Position de lecture" />
+            <span className="pb-time">−{formatClock(Math.max(0, duration - p.position))}</span>
+          </div>
         </div>
-        <div className="pb-progress">
-          <span className="pb-time">{formatClock(p.position)}</span>
-          <Slider value={Math.floor(p.position)} max={duration} onChange={p.seek} label="Position de lecture" />
-          <span className="pb-time">{formatClock(duration)}</span>
-        </div>
+        {ep && (
+          <button
+            className={`icon-btn pb-like ${liked ? 'is-on' : ''}`}
+            onClick={() => p.toggleLike(ep.slug)}
+            aria-label={liked ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+            aria-pressed={liked}
+          >
+            <HeartIcon filled={liked} />
+          </button>
+        )}
       </div>
 
       {/* Droite : vitesse + volume */}

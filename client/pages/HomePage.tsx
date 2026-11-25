@@ -5,7 +5,8 @@ import { Cover } from '../components/Cover';
 import { PlayButton } from '../components/PlayButton';
 import { ThemeTiles } from '../components/ThemeTiles';
 import { Carousel } from '../components/Carousel';
-import { EpisodePoster, RankedEpisode } from '../components/EpisodePoster';
+import { RankedEpisode } from '../components/EpisodePoster';
+import { Coverflow } from '../components/Coverflow';
 
 export function HomePage() {
   const [latest] = MOCK_EPISODES;
@@ -45,12 +46,8 @@ export function HomePage() {
         ))}
       </Carousel>
 
-      {/* Derniers épisodes */}
-      <Carousel title="À rattraper sous la couette" kind="posters">
-        {MOCK_EPISODES.map((ep, i) => (
-          <EpisodePoster key={`${ep.slug}-${i}`} episode={ep} />
-        ))}
-      </Carousel>
+      {/* Derniers épisodes : carrousel en perspective */}
+      <Coverflow title="À rattraper sous la couette" episodes={MOCK_EPISODES} />
 
       <section className="section" style={{ textAlign: 'center' }}>
         <Link className="btn light" to="/episodes">Voir tous les épisodes</Link>
