@@ -14,7 +14,8 @@ import { PlayButton } from './PlayButton';
 export function Coverflow({ title, episodes }: { title: string; episodes: Episode[] }) {
   // Une seule carte par épisode (au cas où la liste contient des doublons)
   const items = useMemo(() => [...new Map(episodes.map((e) => [e.slug, e])).values()], [episodes]);
-  const [active, setActive] = useState(0);
+  // Démarre sur la 3ᵉ carte : des voisines de chaque côté (le tout dernier épisode est déjà « à la une »)
+  const [active, setActive] = useState(() => Math.min(2, Math.max(0, items.length - 1)));
   const dragStart = useRef<number | null>(null);
 
   const go = (i: number) => setActive(Math.min(Math.max(0, i), items.length - 1));
@@ -80,7 +81,7 @@ export function Coverflow({ title, episodes }: { title: string; episodes: Episod
             >
               <div className="cf-cover">
                 <Cover episode={ep} variant="title" />
-                {isActive && <PlayButton episode={ep} />}
+                {isActive && <PlayButton episode={ep} queue={items} />}
               </div>
               <div className="cf-text">
                 {isActive ? (

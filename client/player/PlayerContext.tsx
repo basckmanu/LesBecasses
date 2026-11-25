@@ -16,7 +16,8 @@ type PlayerState = {
   muted: boolean;
   hasPrev: boolean;
   hasNext: boolean;
-  play: (episode: Episode) => void;
+  /** `queue` : la liste d'où l'on lance l'épisode (devient la file de lecture) */
+  play: (episode: Episode, queue?: Episode[]) => void;
   toggle: () => void;
   seek: (seconds: number) => void;
   skip: (delta: number) => void;
@@ -37,10 +38,11 @@ const readNumber = (key: string, fallback: number) => {
 };
 
 /**
- * `playlist` : ordre de lecture pour précédent / suivant (ex. tous les épisodes).
- * Version réelle : la liste renvoyée par GET /api/episodes.
+ * File de lecture (précédent / suivant) : la liste affichée là où l'on a lancé
+ * l'épisode (accueil, liste filtrée…), comme sur les applis de streaming.
  */
-export function PlayerProvider({ children, playlist = [] }: { children: ReactNode; playlist?: Episode[] }) {
+export function PlayerProvider({ children }: { children: ReactNode }) {
+  const [playlist, setPlaylist] = useState<Episode[]>([]);
   const [episode, setEpisode] = useState<Episode | null>(null);
   const [playing, setPlaying] = useState(false);
   const [position, setPosition] = useState(0);
@@ -97,7 +99,11 @@ export function PlayerProvider({ children, playlist = [] }: { children: ReactNod
       muted,
       hasPrev: index > 0,
       hasNext: index >= 0 && index < queue.length - 1,
-      play: (ep) => (episode?.slug === ep.slug ? setPlaying(true) : load(ep)),
+      play: (ep, list) => {
+        setPlaylist(list?.length ? list : [ep]);
+        if (episode?.slug === ep.slug) setPlaying(true);
+        else load(ep);
+      },
       toggle: () => episode && setPlaying((p) => !p),
       seek: (s) => setPosition(Math.min(Math.max(0, s), duration)),
       skip: (d) => setPosition((p) => Math.min(Math.max(0, p + d), duration)),

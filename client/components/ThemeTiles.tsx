@@ -1,13 +1,13 @@
 import { Link } from 'react-router';
 import type { Tag } from '../../shared/types';
-import { THEME_STYLES } from '../mocks/episodes';
+import { themeStyle } from '../config/home';
 
 /** Grille de tuiles colorées, une par thème, qui mènent à la liste filtrée. */
 export function ThemeTiles({ tags }: { tags: Tag[] }) {
   return (
     <div className="tiles">
-      {tags.map((t) => {
-        const s = THEME_STYLES[t.slug] ?? { from: '#7b1e2c', to: '#b0394c', pitch: '' };
+      {tags.map((t, i) => {
+        const s = themeStyle(t.slug, i);
         return (
           <Link
             key={t.slug}
@@ -15,7 +15,7 @@ export function ThemeTiles({ tags }: { tags: Tag[] }) {
             className="tile"
             style={{ background: `linear-gradient(100deg, ${s.from}, ${s.to})` }}
           >
-            <span>{s.pitch}</span>
+            {s.pitch && <span>{s.pitch}</span>}
             <strong>{t.label}</strong>
           </Link>
         );

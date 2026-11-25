@@ -4,7 +4,9 @@
 INSERT OR IGNORE INTO tags (id, slug, label) VALUES
   (1, 'societe', 'Société'),
   (2, 'culture', 'Culture'),
-  (3, 'invite', 'Invité');
+  (3, 'invite', 'Invité'),
+  (4, 'jeux-video', 'Jeux vidéo'),
+  (5, 'sport', 'Sport');
 
 INSERT OR IGNORE INTO episodes (id, slug, guid, title, summary, status, published_at, youtube_id, audio_key, audio_bytes, duration_sec, season, episode_number) VALUES
   (1, 'ep-001-pilote', '7d1c2f0e-0001-4a3b-9c1d-000000000001', 'Épisode 1 — Le pilote', 'On se présente et on explique le projet.', 'published', '2026-09-01T08:00:00Z', NULL, 'ep-001-pilote.mp3', 43200000, 2700, 1, 1),

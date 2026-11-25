@@ -5,24 +5,22 @@ import { Cover } from './Cover';
 import { PlayButton } from './PlayButton';
 import { TagChips } from './TagChips';
 
-export function EpisodeCard({ episode }: { episode: Episode }) {
+/** Carte d'épisode en verre dépoli : pochette façon affiche, titre et infos en dessous. */
+export function EpisodeCard({ episode, queue }: { episode: Episode; queue?: Episode[] }) {
   return (
-    <article className="card">
-      <Link to={`/episodes/${episode.slug}`} tabIndex={-1}>
-        <Cover episode={episode} />
-      </Link>
-      <div className="card-body">
-        <span className="meta">
+    <article className="ep-card glass">
+      <div className="ep-cover">
+        <Link to={`/episodes/${episode.slug}`} tabIndex={-1} aria-hidden>
+          <Cover episode={episode} variant="title" />
+        </Link>
+        <PlayButton episode={episode} queue={queue} />
+      </div>
+      <div className="ep-text">
+        <Link to={`/episodes/${episode.slug}`} className="ep-title">{episode.title}</Link>
+        <span className="ep-sub">
           {formatDate(episode.published_at)} · {formatDuration(episode.duration_sec)}
         </span>
-        <h3>
-          <Link to={`/episodes/${episode.slug}`}>{episode.title}</Link>
-        </h3>
-        <p>{episode.summary}</p>
-        <div className="card-footer">
-          <TagChips tags={episode.tags} />
-          <PlayButton episode={episode} />
-        </div>
+        <TagChips tags={episode.tags} />
       </div>
     </article>
   );

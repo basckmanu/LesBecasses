@@ -1,14 +1,21 @@
 import type { Episode } from '../../shared/types';
 import { usePlayer } from '../player/PlayerContext';
 
-/** Bouton rond (variant "icon") ou bouton texte (variant "full"). */
-export function PlayButton({ episode, variant = 'icon' }: { episode: Episode; variant?: 'icon' | 'full' }) {
+type Props = {
+  episode: Episode;
+  /** La liste affichée autour du bouton : elle devient la file de lecture (précédent / suivant). */
+  queue?: Episode[];
+  /** "icon" : bouton rond ; "full" : bouton avec texte */
+  variant?: 'icon' | 'full';
+};
+
+export function PlayButton({ episode, queue, variant = 'icon' }: Props) {
   const { episode: current, playing, play, toggle } = usePlayer();
   if (!episode.audio_url) return null;
 
   const isCurrent = current?.slug === episode.slug;
   const isPlaying = isCurrent && playing;
-  const onClick = () => (isCurrent ? toggle() : play(episode));
+  const onClick = () => (isCurrent ? toggle() : play(episode, queue));
 
   if (variant === 'full') {
     return (

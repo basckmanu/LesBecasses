@@ -4,7 +4,8 @@ import { PlayerBar } from '../player/PlayerBar';
 export function RootLayout() {
   return (
     <>
-      <div className="mock-banner">MAQUETTE — données factices, lecture audio simulée</div>
+      {/* TODO : retirer avant la mise en ligne */}
+      <div className="mock-banner">VERSION DE DÉVELOPPEMENT — lecture audio simulée</div>
 
       <header className="site-header">
         <div className="container">
