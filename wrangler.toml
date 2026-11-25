@@ -21,7 +21,13 @@ run_worker_first = ["/api/*", "/rss.xml", "/sitemap.xml", "/episodes/*"]
 [[d1_databases]]
 binding = "DB"
 database_name = "podcast-db"
-database_id = "<à remplir par Infra 2>"
+database_id = "9dcd794f-6bce-4fe9-bbdd-dda9dcd24933"
+migrations_dir = "database/migrations"
+
+[[d2_databases]]
+binding = "DB"
+database_name = "database_lesbecasses"
+database_id = "2f3d18b4-7d06-4b60-8cc6-d750e0752f72"
 migrations_dir = "database/migrations"
 
 [[r2_buckets]]
