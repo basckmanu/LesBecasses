@@ -56,8 +56,10 @@ scripts/                 outils (npm run setup)
 Une seule fois :
 
 ```bash
+git clone https://github.com/basckmanu/LesBecasses.git
+cd LesBecasses
 npm install
-npm run setup          # crée .dev.vars + base D1 locale + 5 épisodes factices
+npm run setup          # crée .dev.vars + base D1 locale (migrations) + 5 épisodes factices
 ```
 
 Ensuite, dans deux terminaux :
